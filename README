@@ -1,0 +1,10 @@
+Snake Game - CAO Kha Bao Khanh 2017
+
+This is a snake game project that I wrote for an university assignement around 11/2017. 
+This game is based of the works of other people as mentionned in the LICENSE file, which can be accessed in game.
+To compile, go to the main directory and compile using gcc ./src/*.c -o ./snake_game.exe -lncurses
+
+The game features a single player mode where the player control a snake and eat food with randomized points, therefore
+eating food with more points will result in a shorter snake with higher score. The highscore will be kept in a seperate 
+file (highscore.dat) on the hard disk.
+The game also has a 2-player mode where 2 players can compete to see who can survive longer.
