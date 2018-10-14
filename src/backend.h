@@ -1,0 +1,104 @@
+#ifndef _BACKEND_H_
+#define _BACKEND_H_
+
+#include <stdbool.h>
+
+// directions to describe the current movements of the snake. STOP is pausing the game
+enum Direction { UP, DOWN, LEFT, RIGHT, STOP };
+
+// basically 0 and 1. SUCCESS = 0, FAILURE = 1. To be returned from functions
+enum Status { SUCCESS, FAILURE };
+
+// list of elements. Used for snake body
+typedef struct PointList PointList;
+struct PointList {
+  int point; // to set the number of points for a snake element
+  int x;
+  int y;
+  // bidirectional list of things
+  PointList* next;
+  PointList* previous;
+};
+
+// board storage. Contains list of snake coords, food coords and limits of game board
+/* min max note:
+   - the max value is an "inaccessible" value on the board. Board max border is at max value
+   - the min value is set at the minimal accessible value. Board min border is at min-1 
+ */
+typedef struct {
+  PointList* snake_head;
+  PointList* snake_tail;
+  PointList* foods;
+  // limits on a board. This will be needed to create several game boards
+  int xmin;
+  int ymin;
+  int xmax;
+  int ymax;
+  // scoring mechanism
+  int score;
+}Board;
+
+/******************************************************************************************/
+/**************************************GENERAL_FUNCTIONS***********************************/
+/******************************************************************************************/
+
+// compare if 2 cells are the same
+bool is_same_place (PointList* cell1, PointList* cell2);
+
+// check if a list contains a cell. Return cell pointer found
+PointList* list_contains (PointList* cell, PointList* list);
+
+// deallocate a list of elements. It checks for NULL so just call without worry
+void clear_list (PointList* list); 
+
+// deallocate a board variable
+void clear_board (Board* board);
+
+// return the length of snake
+int snake_length (PointList* snake);
+
+// create a new cell with coordinates x and y. "next" and "previous" pointer set to NULL.
+PointList* create_cell (int x, int y);
+
+/******************************************************************************************/
+/****************************************MOVE_FUNCTIONS************************************/
+/******************************************************************************************/
+
+// move snake by creating new head and clearing the tail. Return SUCCESS if unhinged, FAILURE otherwise
+enum Status move_snake (Board* board, enum Direction dir);
+
+/*
+  This function takes in the board information and current snake direction
+  and return the next head of snake if possible. 
+ */
+PointList* next_move (Board* board, enum Direction dir);
+
+
+/******************************************************************************************/
+/*****************************************INITIALIZERS*************************************/
+/******************************************************************************************/
+
+// initialize the snake for the game
+void create_snake (int x_snake, int y_snake, PointList** snake_head, PointList** snake_tail);
+
+// initialize the board for the game
+Board* create_board (PointList* snake_head, PointList* snake_tail, PointList* foods, int xmax, int ymax, int xmin, int ymin);
+
+
+
+/******************************************************************************************/
+/****************************************FOOD_FUNCTIONS************************************/
+/******************************************************************************************/
+// create a random cell with coordinates x, y, next = NULL. xmax and ymax to set limits for rand function
+PointList* create_random_cell (int xmax, int ymax, int xmin, int ymin);
+
+// add a new food element into board by adding a new element to the head of the food list in board info
+void add_new_food (Board* board);
+
+// update the score value for each food element to randomize the gameplay
+void score_update (PointList* foods);
+
+// remove an element from list. If element is valid, remove and return true. Else return false
+bool remove_from_list (PointList* element, PointList** list);
+
+#endif
